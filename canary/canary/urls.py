@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 from canary.views import register, sign_in, logout_view
-from dbcanary.views import create_advert, CarView
+from dbcanary.views import create_advert, CarView, advert_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +25,7 @@ urlpatterns = [
     path("auth/", sign_in, name="auth"),
     path("logout/", logout_view, name="logout"),
     path('', CarView.as_view(), name="showbill"),
+    path("advert/<int:advert_id>", advert_view, name="car_details"),
     path('showbill/add/', create_advert, name="add_advert"),
 ]
 

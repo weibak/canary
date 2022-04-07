@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Advert {{ advert.car.model }}{% endblock %}
+{% block content %}
+
+    <main class="car-details">
+        <h1 class="my-4">{{ advert.car.mark }} {{ advert.car.model.car_model }}</h1>
+        <div class="row">
+            <div class="col-4">
+                {% if advert.image %}
+                    <img src="{{ advert.image.url }}" alt="{{ advert.car.model }}" class="w-100">
+                {% else %}
+                    <img src="{% static 'no-image.jpg' %}" class="card-img-top img-thumbnail" alt="No image">
+                {% endif %}
+            </div>
+            <div class="col-8">
+                <h3 class="mb-3">Price: {{ advert.price }} BYN | {{ advert.price_usd }} USD</h3>
+                <div class="mb-3">
+                <h4 class="mb-3">Information: </h4>
+                <h6 class="mb-3">Engine type: {{ advert.get_engine_type_display }}</h6>
+                <h6 class="mb-3">Engine capacity: {{ advert.engine_capacity }} l.</h6>
+                <h6 class="mb-3">Gear box: {{ advert.get_gear_box_display }}</h6>
+                <h6 class="mb-3">Drive: {{ advert.get_drive_display }}</h6>
+                <h6 class="mb-3">Win: {{ advert.win }}</h6>
+                <h6 class="mb-3">Phone number: {{ advert.phone_number }}</h6>
+                    <div class="description mb-3">
+                    <h3 class="mb-3">Description:</h3>
+                    <h6 class="mb-3" >{{ advert.description }}</h6>
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        {% if is_advert_in_favorites %}
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="btn btn-primary">Remove from favorites</button>
+                        {% else %}
+                            <input type="hidden" name="action" value="add">
+                            <button type="submit" class="btn btn-primary">Add to favorites</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

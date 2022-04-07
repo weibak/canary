@@ -1,7 +1,8 @@
 import logging
 
+from django.contrib import messages
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 
 from dbcanary.forms import AdvertForm, CarForm, CarFiltersForm
@@ -20,7 +21,11 @@ def create_advert(request, *args, **kwargs):
                 car = Car.objects.create(**form_car.cleaned_data)
                 if form.is_valid():
                     logger.info(form.cleaned_data)
-                    advert = Advert.objects.create(car=car, owner=request.user, **form.cleaned_data)
+                    advert = Advert.objects.create(
+                        car=car, owner=request.user,
+                        honey=request.META.get(
+                            'HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')).split(',')[-1].strip(),
+                        **form.cleaned_data)
                     advert.save()
                 return redirect(
                     "/",
@@ -53,3 +58,24 @@ class CarView(TemplateView):
         page_number = "page"
         adverts = paginator.get_page(page_number)
         return {"adverts": adverts, "filters_form": filters_form}
+
+
+def advert_view(request, advert_id):
+    advert = get_object_or_404(Advert, id=advert_id)
+    if request.method == "POST":
+        if request.user.is_authenticated and request.method == "POST":
+            if request.POST["action"] == "add":
+                advert.favorites.add(request.user)
+                messages.info(request, "Product successfully added to favorites")
+            elif request.POST["action"] == "remove":
+                advert.favorites.remove(request.user)
+                messages.info(request, "Product successfully removed to favorites")
+            redirect("car_details", advert_id=advert.id)
+    return render(
+        request,
+        "car_details.html",
+        {
+            "advert": advert,
+            "is_advert_in_favorites": request.user in advert.favorites.all(),
+        },
+    )

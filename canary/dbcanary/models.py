@@ -90,6 +90,7 @@ class Advert(models.Model):
     favorites = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="favorite_adverts"
     )
+    honey = models.CharField(max_length=200, default=None)
 
     def __str__(self):
         return f"{self.car.mark} - {self.car.model} - {self.car.year}"

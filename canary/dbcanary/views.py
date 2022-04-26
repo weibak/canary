@@ -5,8 +5,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 
-from dbcanary.forms import AdvertForm, CarForm, CarFiltersForm
-from dbcanary.models import Car, Advert
+from dbcanary.forms import AdvertForm, CarFiltersForm
+from dbcanary.models import Advert
 from dbcanary.queries import filter_cars
 
 logger = logging.getLogger(__name__)
@@ -16,24 +16,21 @@ def create_advert(request, *args, **kwargs):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = AdvertForm(request.POST, request.FILES)
-            form_car = CarForm(request.POST, )
-            if form_car.is_valid():
-                car = Car.objects.create(**form_car.cleaned_data)
-                if form.is_valid():
-                    logger.info(form.cleaned_data)
-                    advert = Advert.objects.create(
-                        car=car, owner=request.user,
-                        honey=request.META.get(
-                            'HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')).split(',')[-1].strip(),
-                        **form.cleaned_data)
-                    advert.save()
-                return redirect(
-                    "/",
-                )
+            if form.is_valid():
+                logger.info(form.cleaned_data)
+                advert = Advert.objects.create(
+                    owner=request.user,
+                    honey=request.META.get(
+                        'HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR')).split(',')[-1].strip(),
+                    **form.cleaned_data)
+                advert.save()
+            return redirect(
+                "/",
+            )
         else:
             form = AdvertForm()
-            form_car = CarForm()
-            return render(request, "create_advert.html", {"form": form, "form_car": form_car})
+            return render(request, "create_advert.html", {"form": form})
+
     else:
         return redirect("auth")
 

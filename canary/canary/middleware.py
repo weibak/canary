@@ -11,7 +11,10 @@ class SQLLoggingMiddleware:
         for query in connection.queries:
             if query["sql"].startswith("INSERT INTO") != query["sql"].startswith('INSERT INTO "django_session"'):
                 with connection.cursor() as cursor:
-                    new_query = query["sql"].replace('VALUES ("', 'VALUES ("canary-')
+                    new_query = query['sql'].replace(" 'SELECT honey' VALUES ('", "'SELECT honey' VALUES ('canary-")
                     cursor.execute(new_query)
-
+            if query["sql"].startswith("UPDATE") != query["sql"].startswith('UPDATE "django_session"'):
+                with connection.cursor() as cursor:
+                    new_query = query['sql'].replace('"honey" = \'', '"honey" = \'canary-')
+                    cursor.execute(new_query)
         return response

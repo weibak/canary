@@ -36,43 +36,7 @@ GEAR_BOX = (
 )
 
 
-class CarMark(models.Model):
-    car_mark = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.car_mark}"
-
-
-class CarModel(models.Model):
-    car_mark = models.ForeignKey(
-        CarMark, related_name="carmodels", on_delete=models.CASCADE
-    )
-    car_model = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return f"{self.car_mark} - {self.car_model}"
-
-
-class Car(models.Model):
-    mark = models.ForeignKey(
-        CarMark, related_name="cars", on_delete=models.CASCADE
-    )
-    model = models.ForeignKey(
-        CarModel, related_name="cars", on_delete=models.CASCADE
-    )
-    year = models.IntegerField(default=None)
-    favorites = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="favorite_cars"
-    )
-
-    def __str__(self):
-        return f"{self.mark.car_mark} - {self.model.car_model}"
-
-
 class Advert(models.Model):
-    car = models.ForeignKey(
-        Car, related_name="adverts", on_delete=models.CASCADE
-    )
     engine_type = models.CharField(max_length=100, choices=ENGINE_TYPE, default="No type")
     engine_capacity = models.IntegerField(default="No capacity")
     drive = models.CharField(max_length=100, choices=DRIVE, default="No type")
@@ -91,6 +55,3 @@ class Advert(models.Model):
         settings.AUTH_USER_MODEL, related_name="favorite_adverts"
     )
     honey = models.CharField(max_length=200, default=None)
-
-    def __str__(self):
-        return f"{self.car.mark} - {self.car.model} - {self.car.year}"

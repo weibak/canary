@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from dbcanary.models import CarMark, CarModel, ENGINE_TYPE, DRIVE, GEAR_BOX, ORDER_BY_CHOICES
+from dbcanary.models import ENGINE_TYPE, DRIVE, GEAR_BOX, ORDER_BY_CHOICES
 
 
 class CarFiltersForm(forms.Form):
@@ -18,12 +18,6 @@ class CarFiltersForm(forms.Form):
         price__lt = cleaned_data.get("price__lt")
         if price__gt and price__lt and price__gt > price__lt:
             raise ValidationError("Min price can't be greater than Max price")
-
-
-class CarForm(forms.Form):
-    mark = forms.ModelChoiceField(CarMark.objects.all(), required=True)
-    model = forms.ModelChoiceField(CarModel.objects.all())
-    year = forms.IntegerField()
 
 
 class AdvertForm(forms.Form):

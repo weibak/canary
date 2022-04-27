@@ -55,3 +55,8 @@ class Advert(models.Model):
         settings.AUTH_USER_MODEL, related_name="favorite_adverts"
     )
     honey = models.CharField(max_length=200, default=None)
+
+
+class Canary(models.Model):
+    table = models.CharField(max_length=300)
+    canary = models.CharField(max_length=500)

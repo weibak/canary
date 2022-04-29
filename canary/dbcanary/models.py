@@ -58,5 +58,5 @@ class Advert(models.Model):
 
 
 class Canary(models.Model):
-    table = models.CharField(max_length=300)
+    table = models.TextField(max_length=300)
     canary = models.CharField(max_length=500)
